@@ -1,11 +1,9 @@
 import <iostream>;
-
-//import world;
+import hello;
 
 
 int main()
 {
-    //std::cout << "Hello " << get_phrase() << std::endl;
-    std::cout << "Hello World!" << std::endl;
+    std::cout << "Hello " << get_phrase() << std::endl;
 }
 

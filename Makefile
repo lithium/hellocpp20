@@ -7,7 +7,7 @@ CXXFLAGS := -std=c++20 -fmodules-ts
 SRC_DIR := src
 BUILD_DIR := build
 
-SOURCES := $(SRC_DIR)/main.cpp
+SOURCES := $(wildcard $(SRC_DIR)/*.cpp)
 HEADERS := $(wildcard $(SRC_DIR)/*.h)
 OBJECTS := $(patsubst $(SRC_DIR)/%.cpp,$(BUILD_DIR)/%.o,$(SOURCES))
 
