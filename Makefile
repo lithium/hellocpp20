@@ -1,15 +1,20 @@
 NAME := hellocpp20
 
-CXXFLAGS := -std=c++20
+CXX := g++
+CXXFLAGS := -std=c++20 -fmodules-ts
 
 
 SRC_DIR := src
 BUILD_DIR := build
 
-SOURCES := src/main.cpp
+SOURCES := $(SRC_DIR)/main.cpp
 HEADERS := $(wildcard $(SRC_DIR)/*.h)
 OBJECTS := $(patsubst $(SRC_DIR)/%.cpp,$(BUILD_DIR)/%.o,$(SOURCES))
 
+
+STD_MODULES := iostream algorithm
+GCM_CACHE := gcm.cache/usr/include/c++/12
+STD_OBJECTS := $(addprefix $(GCM_CACHE)/, $(addsuffix .gcm, $(STD_MODULES)))
 
 ###
 #
@@ -19,14 +24,20 @@ OBJECTS := $(patsubst $(SRC_DIR)/%.cpp,$(BUILD_DIR)/%.o,$(SOURCES))
 
 all: $(BUILD_DIR)/$(NAME)
 
-$(BUILD_DIR)/$(NAME): $(OBJECTS)
-	$(CXX) $^ $(CXXFLAGS) -o $@
+$(BUILD_DIR)/$(NAME): $(STD_OBJECTS) $(OBJECTS)
+	$(CXX) $(OBJECTS) $(CXXFLAGS) -o $@
 
-$(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp $(HEADERS)
+$(GCM_CACHE)/%.gcm:
+	$(CXX) $(CXXFLAGS) -x c++-system-header $(@:$(GCM_CACHE)/%.gcm=%)
+
+$(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp $(HEADERS) 
 	mkdir -p $(BUILD_DIR)
 	$(CXX) $(CXXFLAGS) -c -o $@ $<
 
+run: $(BUILD_DIR)/$(NAME)
+	$(BUILD_DIR)/$(NAME)
+
 clean:
-	rm -f $(OBJECTS) $(BUILD_DIR)/$(NAME)
+	rm -rf $(BUILD_DIR) gcm.cache
 
 .PHONY: clean all
